@@ -13,43 +13,47 @@ const App: React.FC = () => {
 };
 
 const HexagramApp: React.FC = () => {
-  const { stepOneResult, stepTwoResult, stepThreeResult, uiState, generateRandomNumber, getMainHexagram, getChangingHexagram, resetState } = useDataStore();
+  const {
+    stepOneResult,
+    stepTwoResult,
+    stepThreeResult,
+    uiState,
+    generateRandomNumber,
+    getMainHexagram,
+    getChangingHexagram,
+    resetState
+  } = useDataStore();
 
   const getStepMessage = () => {
-    if (uiState.currentStep === 'generatingHexagrams') {
-      return '起卦';
-    } else if (uiState.currentStep === 'gettingMainHexagram') {
-      return '主卦';
-    } else {
-      return '变卦';
+    switch (uiState.currentStep) {
+      case 'generatingHexagrams':
+        return '起卦';
+      case 'gettingMainHexagram':
+        return '主卦';
+      default:
+        return '变卦';
     }
-  }
+  };
 
   const getActionMessage = () => {
     if (uiState.currentStep === 'generatingHexagrams') {
-      if (stepOneResult?.randomNumbers?.length === 6) {
-        return '得主卦';
-      } else {
-        return '摇卦';
-      }
+      return stepOneResult?.randomNumbers?.length === 6 ? '得主卦' : '摇卦';
     } else if (uiState.currentStep === 'gettingMainHexagram') {
       return '得变卦';
     } else {
       return '重新算一卦';
     }
-  }
+  };
 
   const onAction = () => {
-    if (uiState.currentStep === 'generatingHexagrams' && stepOneResult?.randomNumbers?.length !== 6) {
-      generateRandomNumber();
-    } else if (uiState.currentStep === 'generatingHexagrams' && stepOneResult?.randomNumbers?.length === 6) {
-      getMainHexagram();
+    if (uiState.currentStep === 'generatingHexagrams') {
+      stepOneResult?.randomNumbers?.length !== 6 ? generateRandomNumber() : getMainHexagram();
     } else if (uiState.currentStep === 'gettingMainHexagram') {
       getChangingHexagram();
     } else {
       resetState();
     }
-  }
+  };
 
   return (
     <div>
@@ -67,9 +71,7 @@ const HexagramApp: React.FC = () => {
           <p>变卦: {stepThreeResult.changingHexagram} ({stepThreeResult.changingHexagramCode})</p>
         </div>
       )}
-      <button onClick={onAction}>
-        {getActionMessage()}
-      </button>
+      <button onClick={onAction}>{getActionMessage()}</button>
     </div>
   );
 };
